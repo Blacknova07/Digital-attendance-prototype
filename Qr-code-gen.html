@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student QR</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 20px; }
+        input { padding: 10px; width: 80%; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; }
+        button { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 8px; }
+        #timer { color: red; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Student Attendance QR</h2>
+    <input type="text" id="name" placeholder="Full Name (Surname First)">
+    <input type="text" id="matric" placeholder="Matric Number">
+    <br><br>
+    <button onclick="generate()">Generate QR Code</button>
+    <div id="qrcode" style="margin-top: 20px;"></div>
+    <p id="timer"></p>
+
+    <script>
+        function generate() {
+            const name = document.getElementById('name').value;
+            const matric = document.getElementById('matric').value;
+
+            if (name && matric) {
+                document.getElementById('qrcode').innerHTML = "";
+
+                const data = JSON.stringify({ name: name, matric: matric, ts: Math.floor(Date.now() / 1000) });
+                new QRCode(document.getElementById('qrcode'), { text: data, width: 256, height: 256 });
+
+                let secs = 30;
+                const timer = setInterval(() => {
+                    secs--;
+                    document.getElementById('timer').innerText = "Expires in: " + secs + "s";
+                    if (secs <= 0) {
+                        clearInterval(timer);
+                        document.getElementById('qrcode').innerHTML = "";
+                        document.getElementById('timer').innerText = "⛔ Expired. Generate a new one.";
+                    }
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
